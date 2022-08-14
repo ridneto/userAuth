@@ -39,9 +39,16 @@ public class UserController {
                     size = 10,
                     sort = "userId",
                     direction = Sort.Direction.ASC
-            ) Pageable pageable
+            ) Pageable pageable,
+            @RequestParam(required = false) UUID courseId
     ){
-        Page<UserModel> userModelPage = userService.findAll(spec, pageable);
+        Page<UserModel> userModelPage;
+
+        if(courseId != null) {
+            userModelPage = userService.findAll(SpecificationTemplate.userCourseId(courseId).and(spec), pageable);
+        } else {
+            userModelPage = userService.findAll(spec, pageable);
+        }
 
         if(!userModelPage.isEmpty()){
             for(UserModel user: userModelPage.toList()){
